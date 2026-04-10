@@ -13,7 +13,11 @@ class Voxcut < Formula
 
   def install
     virtualenv_create(libexec, "python3.13")
-    system libexec/"bin/pip", "install", "voxcut==#{version}"
+    # Homebrew sandboxes network during `system` calls, so use pip_install
+    # with the cached tarball + allow deps from PyPI via extra args.
+    system libexec/"bin/pip", "install",
+           "--no-build-isolation",
+           cached_download.to_s
     bin.install_symlink Dir[libexec/"bin/voxcut*"]
   end
 
