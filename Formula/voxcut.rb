@@ -12,10 +12,11 @@ class Voxcut < Formula
   depends_on :macos
 
   def install
-    # Create virtualenv and wrapper scripts. Dependencies are installed in
-    # post_install because pip needs network access for ~60 transitive deps
-    # (including platform-specific MLX wheels for Apple Silicon).
-    virtualenv_create(libexec, "python3.13")
+    # Create virtualenv with pip available
+    venv = virtualenv_create(libexec, "python3.13")
+
+    # Ensure pip is available
+    system libexec/"bin/python", "-m", "ensurepip", "--upgrade"
 
     # Create wrapper scripts that delegate to the virtualenv
     (bin/"voxcut").write <<~SH
@@ -29,6 +30,7 @@ class Voxcut < Formula
   end
 
   def post_install
+    system libexec/"bin/python", "-m", "ensurepip", "--upgrade"
     system libexec/"bin/pip", "install", "voxcut==#{version}"
   end
 
@@ -36,6 +38,9 @@ class Voxcut < Formula
     <<~EOS
       On first run, voxcut downloads the SAM-Audio model weights (~500 MB).
       This is a one-time download stored in the HuggingFace cache.
+
+      If post-install failed, run manually:
+        brew postinstall nullhtp/voxcut/voxcut
     EOS
   end
 
