@@ -1,4 +1,6 @@
 class Voxcut < Formula
+  include Language::Python::Virtualenv
+
   desc "Audio editing TUI: cut fragments, isolate voices with SAM-Audio (MLX)"
   homepage "https://github.com/nullhtp/voxcut"
   url "https://files.pythonhosted.org/packages/source/v/voxcut/voxcut-0.1.0.tar.gz"
@@ -10,8 +12,8 @@ class Voxcut < Formula
   depends_on :macos
 
   def install
-    virtualenv_create(libexec, "python3.13")
-    system libexec/"bin/pip", "install", "voxcut==#{version}"
+    venv = virtualenv_create(libexec, "python3.13")
+    venv.pip_install "voxcut==#{version}"
     bin.install_symlink Dir[libexec/"bin/voxcut*"]
   end
 
