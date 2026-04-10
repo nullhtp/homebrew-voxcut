@@ -12,8 +12,8 @@ class Voxcut < Formula
   depends_on :macos
 
   def install
-    venv = virtualenv_create(libexec, "python3.13")
-    venv.pip_install "voxcut==#{version}"
+    virtualenv_create(libexec, "python3.13")
+    system libexec/"bin/pip", "install", "voxcut==#{version}"
     bin.install_symlink Dir[libexec/"bin/voxcut*"]
   end
 
